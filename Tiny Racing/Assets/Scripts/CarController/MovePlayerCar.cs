@@ -35,7 +35,7 @@ public class MovePlayerCar : MonoBehaviour
 
     public void Update()
     {
-	    rb.drag = rb.velocity.magnitude / 250F;
+	    rb.linearDamping = rb.linearVelocity.magnitude / 250F;
 	    engineRPM = (frontLeftWheel.rpm + frontRightWheel.rpm) / 2 * gearRatio[currentGear];
         ShiftGears();
 
