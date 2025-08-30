@@ -14,6 +14,10 @@ public class CarControl : MonoBehaviour
     [Header("Deceleration")]
     public float idleDeceleration = 500f; // força de freio motor
 
+    [Header("Car Lights")]
+    [SerializeField] private GameObject[] frontLights;
+    [SerializeField] private GameObject[] backLights;
+
     private WheelControl[] wheels;
     private Rigidbody rigidBody;
 
@@ -28,6 +32,10 @@ public class CarControl : MonoBehaviour
 
         // Pega todas as rodas
         wheels = GetComponentsInChildren<WheelControl>();
+
+        // Garante que luzes começam apagadas
+        SetLights(frontLights, false);
+        SetLights(backLights, false);
     }
 
     void FixedUpdate()
@@ -67,15 +75,41 @@ public class CarControl : MonoBehaviour
             }
             else
             {
-                // 🚗 Freio motor quando solta o acelerador
+                // Freio motor quando solta o acelerador
                 wheel.WheelCollider.motorTorque = 0f;
                 wheel.WheelCollider.brakeTorque = idleDeceleration;
             }
         }
 
+
+        if (vInput > 0.01f) // andando pra frente
+        {
+            SetLights(frontLights, true);
+            SetLights(backLights, false);
+        }
+        else if (vInput < -0.01f) // ré
+        {
+            SetLights(frontLights, false);
+            SetLights(backLights, true);
+        }
+        else // parado
+        {
+            SetLights(frontLights, false);
+            SetLights(backLights, false);
+        }
+
         if (Input.GetKeyDown(KeyCode.R))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+    }
+
+    private void SetLights(GameObject[] lights, bool state)
+    {
+        foreach (var lightObj in lights)
+        {
+            if (lightObj != null)
+                lightObj.SetActive(state);
         }
     }
 }
